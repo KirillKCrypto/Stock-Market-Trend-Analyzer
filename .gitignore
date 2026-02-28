@@ -1,0 +1,129 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Virtual environments
+env/
+venv/
+.env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Data files (often too large for git)
+*.csv
+*.tsv
+*.xlsx
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.nc
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.joblib
+*.db
+*.sqlite3
+data/
+raw_data/
+processed_data/
+interim_data/
+external_data/
+
+# Models / checkpoints (large binary files)
+*.h5
+*.hdf5
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.onnx
+*.pb
+*.tflite
+*.mlmodel
+*.mar
+saved_models/
+models/
+checkpoints/
+mlruns/               # MLflow
+wandb/                # Weights & Biases
+runs/                 # TensorBoard logs
+lightning_logs/       # PyTorch Lightning
+
+# Outputs / results
+outputs/
+results/
+figures/
+plots/
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.html
+*.json      # иногда конфиги хранятся, но обычно результаты в json тоже игнорируют
+*.log
+logs/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.iml
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Build / dist
+dist/
+build/
+*.egg-info/
+*.whl
+*.egg
+
+# Documentation
+docs/_build/
+docs/build/
+site/
+
+# Large archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bz2
+*.xz
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.pid
+*.seed
+*.pid.lock
