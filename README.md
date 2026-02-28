@@ -1,509 +1,324 @@
-Stock Market Regime Detection & Backtesting System
-https://img.shields.io/badge/python-3.8+-blue.svg
-https://img.shields.io/badge/LightGBM-3.3+-green.svg
-https://img.shields.io/badge/License-MIT-yellow.svg
+📈 Quantitative Market Regime Detection & Trading System
 
-A complete pipeline for market regime classification and strategy backtesting.
-The system downloads historical stock data, engineers over 50 technical features, detects market regimes (Bull/Neutral/Bear) using Gaussian Mixture Models, trains a two-stage LightGBM classifier, and backtests a realistic trading strategy with risk management.
+A production-grade two-stage market regime classification and backtesting framework built with:
 
-Features
-📥 Automated data download from Yahoo Finance via yfinance.
+LightGBM
 
-🧠 Feature engineering – momentum, volatility, volume, technical indicators (RSI, MACD, Bollinger Bands, ATR, etc.).
+Gaussian Mixture Models (GMM)
 
-🔍 Regime detection – unsupervised clustering (GMM) to label Bull/Neutral/Bear regimes.
+Advanced feature engineering
 
-🤖 Two-stage ML model:
+Risk-managed trade execution
 
-trend model – predicts market regime (Bull/Neutral/Bear).
+Multi-asset backtesting engine
 
-direction model – predicts Long/Short within trending regimes.
+This project implements a regime-aware trading architecture:
 
-📈 Backtesting engine with realistic constraints:
+Detect structural market regimes (Bull / Neutral / Bear)
 
-ATR-based stop‑loss, take‑profit, trailing stop.
+Predict future regimes using supervised ML
 
-Partial profit‑taking.
+Generate directional signals
 
-Position sizing based on risk per trade and volatility.
+Execute trades with strict risk management
 
-Commission and slippage simulation.
+Evaluate performance via realistic backtesting
 
-📊 Visualization – regime overlays on price charts, equity curves, drawdowns.
+🧠 System Architecture
+Data Acquisition
+        ↓
+Feature Engineering
+        ↓
+Unsupervised Regime Detection (GMM)
+        ↓
+Supervised Trend Model (LightGBM)
+        ↓
+Directional Model (LightGBM)
+        ↓
+Backtest Engine (ATR-based risk management)
+        ↓
+Performance Analytics
+📂 Project Structure
+├── config.py
+├── setup.py
+├── data_acquisition.py
+├── model_training.py
+├── backtest.py
+│
+├── <TICKER>/
+│   ├── <TICKER>_data.csv
+│   ├── <TICKER>_predictions.csv
+│   ├── models/
+│   │   └── <TICKER>_trend_analyzer.pkl
+│   ├── plots/
+│   │   └── <TICKER>_regimes.png
+│   └── <TICKER>_backtest/
+⚙️ Installation
+pip install pandas numpy yfinance lightgbm scikit-learn scipy matplotlib joblib
+🚀 Full Pipeline Execution
 
-🧪 Multi‑asset backtesting – run the same strategy across multiple tickers.
+Run the complete pipeline:
 
-🚀 End‑to‑end pipeline – one command (python setup.py) runs everything.
-
-Project Structure
-text
-.
-├── config.py                 # User configuration (ticker, period)
-├── data_acquisition.py       # Download OHLCV data from Yahoo Finance
-├── model_training.py         # Feature engineering, regime detection, model training
-├── backtest.py               # Backtesting engine and trade simulation
-├── setup.py                  # Orchestrates the complete pipeline
-├── requirements.txt          # Python dependencies
-└── README.md                 # This file
-Installation
-Clone the repository
-
-bash
-git clone https://github.com/yourusername/stock-regime-backtest.git
-cd stock-regime-backtest
-Create a virtual environment (recommended)
-
-bash
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-Install dependencies
-
-bash
-pip install -r requirements.txt
-If you don’t have a requirements.txt, install manually:
-
-bash
-pip install yfinance pandas numpy lightgbm scikit-learn matplotlib scipy joblib
-Configuration
-Edit config.py to set your desired ticker and data period:
-
-python
-ticker = "AAPL"        # Any valid Yahoo Finance symbol
-period = "10y"         # Data period (must be ≥5 years for meaningful regimes)
-period accepts strings like "5y", "10y", "max", or specific dates (see yfinance docs).
-
-Usage
-Run the full pipeline
-bash
 python setup.py
-This will:
 
-Create the directory structure (<ticker>/, models/, plots/, <ticker>_backtest/).
+This performs:
 
-Download historical data and save as <ticker>/<ticker>_data.csv.
+✅ Step 1 — Data Download
 
-Engineer features, detect regimes, train the two‑stage model, and save:
+Downloads historical OHLCV data via yfinance
 
-Trained model: <ticker>/models/<ticker>_trend_analyzer.pkl
+Cleans column structure
 
-Predictions: <ticker>/<ticker>_predictions.csv
+Saves to CSV
 
-Regime plot: <ticker>/plots/<ticker>_regimes.png
+✅ Step 2 — Model Training
 
-Run the backtest and save:
+Advanced feature engineering
 
-Equity curve: <ticker>/<ticker>_backtest/equity_curve.csv
+Rolling GMM regime detection
 
-Trade log: <ticker>/<ticker>_backtest/results.csv
+Label smoothing
 
-Equity plot: <ticker>/plots/<ticker>_equity.png
+Feature selection via LightGBM importance
 
-Run individual modules
-Download data only
+Two-stage training:
 
-bash
-python data_acquisition.py
-Train model only (requires existing data CSV)
+Trend Model (Bull / Neutral / Bear)
 
-bash
-python model_training.py
-Run backtest only (requires trained model)
+Direction Model (Long / Short)
 
-bash
-python backtest.py
-Multi‑asset backtest
-Edit the list of tickers at the bottom of backtest.py and run:
+✅ Step 3 — Visualization
 
-bash
-python backtest.py
-How It Works
-1. Data Acquisition (data_acquisition.py)
-Downloads OHLCV data using yfinance, flattens multi‑index columns, and saves a clean CSV with columns open, high, low, close, volume.
+Saves regime overlay plot
 
-2. Feature Engineering & Regime Detection (model_training.py)
-Features – Over 50 features are created:
+📊 Regime Detection (Unsupervised)
 
-Returns over multiple horizons (1,3,5,10,21,63 days).
+Uses:
 
-Price relative to moving averages (20,50,200).
+Rolling windows
 
-Volatility (5,20,50 days), volatility ratio, acceleration.
+Statistical return features
 
-ATR, Bollinger Bands, MACD, RSI, ADX, MFI, volume ratios, etc.
+Volatility regime metrics
 
-Regime detection – Unsupervised GMM clusters rolling windows of return‑based features into 3 regimes. Regimes are then mapped to Bull, Neutral, Bear based on Sharpe ratio (best → Bull, worst → Bear).
+Autocorrelation
 
-Two‑stage model:
+Drawdown metrics
 
-Trend model – predicts the 3‑class regime (Bull/Neutral/Bear).
-Direction model – trained only on trending periods (Bull & Bear) to predict Long (1) vs Short (2).
-Feature selection – Top 40 features are selected using LightGBM importance to reduce noise.
+Gaussian Mixture Model clustering
 
-3. Backtesting Engine (backtest.py)
-The strategy is simple:
+Regimes are automatically mapped based on Sharpe:
 
-When the direction model predicts Long (1) → enter long.
+Cluster	Mapped Regime
+Lowest Sharpe	Bear
+Middle	Neutral
+Highest Sharpe	Bull
 
-When it predicts Short (2) → enter short.
+Labels are smoothed using median filtering to reduce noise.
 
-Neutral (0) → stay out.
+🤖 Supervised Modeling
+Stage 1 — Trend Model
 
-Risk management:
+Predicts:
 
-Position size = (risk_per_trade * cash) / (ATR * 2) (volatility‑adjusted).
+Bull
 
-Maximum position size limited to max_position_pct of cash.
+Neutral
 
-Stop‑loss = entry price ± atr_mult_sl * ATR.
+Bear
 
-Take‑profit = entry price ± atr_mult_tp * ATR.
+Uses:
 
-Trailing stop = best price ± atr_mult_trail * ATR.
+Top-N feature selection
 
-Partial take‑profit at partial_tp_mult * ATR for half the position.
+Class balancing
 
-Max hold days (exit if held longer).
+Early stopping
 
-Signal flip exit (if signal changes from Long to Short or vice‑versa).
+Time-series split
 
-Optional trend filter: do not short if price is above 200‑day MA.
+Stage 2 — Direction Model
 
-All parameters are configurable in the backtest_advanced() call (see setup.py for example).
+Activated only during trending regimes.
 
-Key Configuration Parameters (Backtest)
-Parameter	Description	Default
-capital	Starting capital	10_000
-risk_per_trade	Fraction of capital risked per trade (based on stop‑loss distance)	0.01
-max_position_pct	Maximum fraction of capital allocated to one position	0.30
-atr_mult_sl	Stop‑loss distance in ATR units	2.0
-atr_mult_tp	Take‑profit distance in ATR units	3.5
-atr_mult_trail	Trailing stop distance in ATR units (0 to disable)	1.5
-partial_tp_ratio	Fraction of position to close at partial take‑profit	0.5
-partial_tp_mult	Partial take‑profit distance in ATR units	2.0
-min_hold_days	Minimum holding days before any exit (except stop‑loss)	1
-max_hold_days	Maximum holding days (force exit)	30
-use_trend_filter	Do not short when price > 200‑day MA	True
-signal_flip_exit	Exit if model signal flips from Long to Short (or vice‑versa)	True
-commission	Round‑trip commission fraction (0.001 = 0.1%)	0.001
-Output & Interpretation
-After running setup.py, you will find:
+Predicts:
 
-<ticker>_data.csv – Raw OHLCV data.
+Long
 
-<ticker>_predictions.csv – Contains close, true regime (trend), predicted regime (trend_pred), predicted direction (direction_pred), and final regime (final_regime where 1=Long, 2=Short, 0=Neutral).
+Short
 
-<ticker>/plots/<ticker>_regimes.png – Price chart with colored backgrounds for true (top) and predicted (bottom) regimes.
+🧪 Backtesting Engine
 
-<ticker>/plots/<ticker>_equity.png – Equity curve, drawdown, and price with trade markers.
+The backtester is not naive.
 
-<ticker>/<ticker>_backtest/results.csv – Detailed trade log (entry/exit dates, prices, PnL, reason, etc.).
+It includes:
 
-<ticker>/<ticker>_backtest/equity_curve.csv – Daily equity values.
+ATR-based stop loss
 
-Sample trade log columns
-entry_date, exit_date
+ATR-based take profit
 
-direction (Long/Short)
+Trailing stop
 
-entry_price, exit_price
+Partial take profit
 
-size
+Maximum holding time
 
-pnl (net after commission)
+Signal flip exits
 
-hold_days
+Trend filters (e.g., MA200)
 
-reason (SL, TP, PartialTP, SignalFlip, MaxHold, End)
+Volatility-adjusted position sizing
 
-Customization & Extending
-Add new features – Edit create_features_optimized() in model_training.py.
+Commission modeling
 
-Change model architecture – Modify TREND_PARAMS / DIR_PARAMS or replace LightGBM with another classifier.
+Realistic equity tracking
 
-Adjust regime detection – Tune n_regimes, window_years, step_days in CONFIG.
+Cash-based accounting
 
-Modify backtest logic – Extend TradeManager class in backtest.py.
+📈 Risk Management
 
-Dependencies
-Python ≥ 3.8
+Position sizing is based on:
 
-yfinance
+Risk per trade
+ATR stop distance
+Volatility scaling
+Maximum portfolio exposure
 
-pandas
+This prevents over-leveraging in volatile environments.
 
-numpy
+📊 Performance Metrics
 
-lightgbm
+The system outputs:
 
-scikit-learn
+Total Return
 
-matplotlib
+Max Drawdown
 
-scipy
+Sharpe Ratio
 
-joblib
+Calmar Ratio
 
-License
-This project is licensed under the MIT License – see the LICENSE file for details.
+Win Rate
 
-Disclaimer
-This software is for educational and research purposes only.
-It is not financial advice. Past performance does not guarantee future results. Use at your own risk.
+Profit Factor
 
-Happy backtesting! 🚀
+Avg Win / Avg Loss
 
-This response is AI-generated, for reference only.
-Можешь скинуть полную MD разметку для вставки
-We need to provide the full markdown content for the README.md. The user asked: "Можешь скинуть полную MD разметку для вставки". So we need to output the markdown code that they can copy and paste into their README.md file. We have already generated a README in the previous response. We'll present that as a code block with markdown syntax.
+Long vs Short performance
 
-But we must ensure it's the full markdown. Let's check the previous response: it's a well-structured README with headings, lists, code blocks, etc. We'll just output that content within a triple backtick block with language "markdown" or just plain text? Usually we just output the raw markdown without additional backticks around it because they want to copy it. However, to clearly indicate that it's markdown, we can put it in a code block with markdown annotation. But that would render as a code block in the final answer, not as markdown. The user wants to insert it into their README.md file, so they need the raw markdown text. We can output it as plain text, but it's better to provide it inside a code block to avoid any formatting issues. The user can then copy the code block content and paste. We'll provide the content within triple backticks with language "markdown" so it's clear.
+Exit reason breakdown
 
-Thus, final answer: a code block containing the full markdown content.
+Signal filtering statistics
 
-markdown
-# Stock Market Regime Detection & Backtesting System
+🌍 Multi-Asset Backtesting
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![LightGBM](https://img.shields.io/badge/LightGBM-3.3+-green.svg)](https://lightgbm.readthedocs.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Run:
 
-A complete pipeline for **market regime classification** and **strategy backtesting**.  
-The system downloads historical stock data, engineers over 50 technical features, detects market regimes (Bull/Neutral/Bear) using Gaussian Mixture Models, trains a two-stage LightGBM classifier, and backtests a realistic trading strategy with risk management.
+run_multi_asset(["AAPL", "MSFT", "SPY", "QQQ"])
 
-## Features
+Outputs comparative table:
 
-- 📥 **Automated data download** from Yahoo Finance via `yfinance`.
-- 🧠 **Feature engineering** – momentum, volatility, volume, technical indicators (RSI, MACD, Bollinger Bands, ATR, etc.).
-- 🔍 **Regime detection** – unsupervised clustering (GMM) to label Bull/Neutral/Bear regimes.
-- 🤖 **Two-stage ML model**:
-  - `trend` model – predicts market regime (Bull/Neutral/Bear).
-  - `direction` model – predicts Long/Short within trending regimes.
-- 📈 **Backtesting engine** with realistic constraints:
-  - ATR-based stop‑loss, take‑profit, trailing stop.
-  - Partial profit‑taking.
-  - Position sizing based on risk per trade and volatility.
-  - Commission and slippage simulation.
-- 📊 **Visualization** – regime overlays on price charts, equity curves, drawdowns.
-- 🧪 **Multi‑asset backtesting** – run the same strategy across multiple tickers.
-- 🚀 **End‑to‑end pipeline** – one command (`python setup.py`) runs everything.
+Return
 
-## Project Structure
-.
-├── config.py # User configuration (ticker, period)
-├── data_acquisition.py # Download OHLCV data from Yahoo Finance
-├── model_training.py # Feature engineering, regime detection, model training
-├── backtest.py # Backtesting engine and trade simulation
-├── setup.py # Orchestrates the complete pipeline
-├── requirements.txt # Python dependencies
-└── README.md # This file
+Drawdown
 
-text
+Sharpe
 
-## Installation
+Calmar
 
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/yourusername/stock-regime-backtest.git
-   cd stock-regime-backtest
-Create a virtual environment (recommended)
+Win rate
 
-bash
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-Install dependencies
+Profit factor
 
-bash
-pip install -r requirements.txt
-If you don’t have a requirements.txt, install manually:
+🔬 Feature Engineering Highlights
 
-bash
-pip install yfinance pandas numpy lightgbm scikit-learn matplotlib scipy joblib
-Configuration
-Edit config.py to set your desired ticker and data period:
+Includes:
 
-python
-ticker = "AAPL"        # Any valid Yahoo Finance symbol
-period = "10y"         # Data period (must be ≥5 years for meaningful regimes)
-period accepts strings like "5y", "10y", "max", or specific dates (see yfinance docs).
+Multi-horizon returns
 
-Usage
-Run the full pipeline
-bash
-python setup.py
-This will:
+Moving average spreads
 
-Create the directory structure (<ticker>/, models/, plots/, <ticker>_backtest/).
+Volatility regimes
 
-Download historical data and save as <ticker>/<ticker>_data.csv.
+ATR and ATR %
 
-Engineer features, detect regimes, train the two‑stage model, and save:
+Bollinger position & width
 
-Trained model: <ticker>/models/<ticker>_trend_analyzer.pkl
+RSI & divergence
 
-Predictions: <ticker>/<ticker>_predictions.csv
+ADX & DI spread
 
-Regime plot: <ticker>/plots/<ticker>_regimes.png
+Volume regime metrics
 
-Run the backtest and save:
+Trend strength via rolling regression
 
-Equity curve: <ticker>/<ticker>_backtest/equity_curve.csv
+Drawdown duration
 
-Trade log: <ticker>/<ticker>_backtest/results.csv
+Z-score normalization
 
-Equity plot: <ticker>/plots/<ticker>_equity.png
+Regime lag features
 
-Run individual modules
-Download data only
+📌 Configuration
 
-bash
-python data_acquisition.py
-Train model only (requires existing data CSV)
+Modify in config.py:
 
-bash
-python model_training.py
-Run backtest only (requires trained model)
+ticker = "AAPL"
+period = "10y"
 
-bash
-python backtest.py
-Multi‑asset backtest
-Edit the list of tickers at the bottom of backtest.py and run:
+Modify training config in model_training.py:
 
-bash
-python backtest.py
-How It Works
-1. Data Acquisition (data_acquisition.py)
-Downloads OHLCV data using yfinance, flattens multi‑index columns, and saves a clean CSV with columns open, high, low, close, volume.
+CONFIG = {
+    'n_regimes': 3,
+    'window_years': 1,
+    'step_days': 10,
+    'n_top_features': 40,
+    'test_size': 0.35,
+}
+🧩 Design Philosophy
 
-2. Feature Engineering & Regime Detection (model_training.py)
-Features – Over 50 features are created:
+This project avoids:
 
-Returns over multiple horizons (1,3,5,10,21,63 days).
+❌ Naive return prediction
+❌ Random entry systems
+❌ Single-stage classification
+❌ Unrealistic backtests
 
-Price relative to moving averages (20,50,200).
+Instead it focuses on:
 
-Volatility (5,20,50 days), volatility ratio, acceleration.
+✔ Structural regime modeling
+✔ Time-series safe splits
+✔ Risk-first execution
+✔ Production-like architecture
 
-ATR, Bollinger Bands, MACD, RSI, ADX, MFI, volume ratios, etc.
+⚠️ Disclaimer
 
-Regime detection – Unsupervised GMM clusters rolling windows of return‑based features into 3 regimes. Regimes are then mapped to Bull, Neutral, Bear based on Sharpe ratio (best → Bull, worst → Bear).
+This project is for research and educational purposes only.
+It does not constitute financial advice.
 
-Two‑stage model:
+🏁 Future Improvements
 
-Trend model – predicts the 3‑class regime (Bull/Neutral/Bear).
-Direction model – trained only on trending periods (Bull & Bear) to predict Long (1) vs Short (2).
-Feature selection – Top 40 features are selected using LightGBM importance to reduce noise.
+Walk-forward optimization
 
-3. Backtesting Engine (backtest.py)
-The strategy is simple:
+Cross-asset regime transfer learning
 
-When the direction model predicts Long (1) → enter long.
+Bayesian regime modeling
 
-When it predicts Short (2) → enter short.
+Online model updating
 
-Neutral (0) → stay out.
+Portfolio-level capital allocation
 
-Risk management:
+Feature importance drift tracking
 
-Position size = (risk_per_trade * cash) / (ATR * 2) (volatility‑adjusted).
+Transaction cost sensitivity analysis
 
-Maximum position size limited to max_position_pct of cash.
+🧠 Author Notes
 
-Stop‑loss = entry price ± atr_mult_sl * ATR.
+This is a quantitative research framework designed to explore:
 
-Take‑profit = entry price ± atr_mult_tp * ATR.
+Market structure modeling
 
-Trailing stop = best price ± atr_mult_trail * ATR.
+Regime-aware strategies
 
-Partial take‑profit at partial_tp_mult * ATR for half the position.
+Risk-controlled ML trading systems
 
-Max hold days (exit if held longer).
-
-Signal flip exit (if signal changes from Long to Short or vice‑versa).
-
-Optional trend filter: do not short if price is above 200‑day MA.
-
-All parameters are configurable in the backtest_advanced() call (see setup.py for example).
-
-Key Configuration Parameters (Backtest)
-Parameter	Description	Default
-capital	Starting capital	10_000
-risk_per_trade	Fraction of capital risked per trade (based on stop‑loss distance)	0.01
-max_position_pct	Maximum fraction of capital allocated to one position	0.30
-atr_mult_sl	Stop‑loss distance in ATR units	2.0
-atr_mult_tp	Take‑profit distance in ATR units	3.5
-atr_mult_trail	Trailing stop distance in ATR units (0 to disable)	1.5
-partial_tp_ratio	Fraction of position to close at partial take‑profit	0.5
-partial_tp_mult	Partial take‑profit distance in ATR units	2.0
-min_hold_days	Minimum holding days before any exit (except stop‑loss)	1
-max_hold_days	Maximum holding days (force exit)	30
-use_trend_filter	Do not short when price > 200‑day MA	True
-signal_flip_exit	Exit if model signal flips from Long to Short (or vice‑versa)	True
-commission	Round‑trip commission fraction (0.001 = 0.1%)	0.001
-Output & Interpretation
-After running setup.py, you will find:
-
-<ticker>_data.csv – Raw OHLCV data.
-
-<ticker>_predictions.csv – Contains close, true regime (trend), predicted regime (trend_pred), predicted direction (direction_pred), and final regime (final_regime where 1=Long, 2=Short, 0=Neutral).
-
-<ticker>/plots/<ticker>_regimes.png – Price chart with colored backgrounds for true (top) and predicted (bottom) regimes.
-
-<ticker>/plots/<ticker>_equity.png – Equity curve, drawdown, and price with trade markers.
-
-<ticker>/<ticker>_backtest/results.csv – Detailed trade log (entry/exit dates, prices, PnL, reason, etc.).
-
-<ticker>/<ticker>_backtest/equity_curve.csv – Daily equity values.
-
-Sample trade log columns
-entry_date, exit_date
-
-direction (Long/Short)
-
-entry_price, exit_price
-
-size
-
-pnl (net after commission)
-
-hold_days
-
-reason (SL, TP, PartialTP, SignalFlip, MaxHold, End)
-
-Customization & Extending
-Add new features – Edit create_features_optimized() in model_training.py.
-
-Change model architecture – Modify TREND_PARAMS / DIR_PARAMS or replace LightGBM with another classifier.
-
-Adjust regime detection – Tune n_regimes, window_years, step_days in CONFIG.
-
-Modify backtest logic – Extend TradeManager class in backtest.py.
-
-Dependencies
-Python ≥ 3.8
-
-yfinance
-
-pandas
-
-numpy
-
-lightgbm
-
-scikit-learn
-
-matplotlib
-
-scipy
-
-joblib
-
-License
-This project is licensed under the MIT License – see the LICENSE file for details.
-
-Disclaimer
-This software is for educational and research purposes only.
-It is not financial advice. Past performance does not guarantee future results. Use at your own risk.
-
-Happy backtesting! 🚀
+Production-grade backtesting
